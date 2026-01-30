@@ -101,7 +101,7 @@ may/should influence how the processes are run.
 1. add spaces after periods
 2. remove extra/duplicate spaces
 3. remove extra/duplicate dashes
-4. remove extra/duplicate hyphons
+4. remove extra/duplicate hyphens
 
 # potential_words
 5. split text on newlines and spaces (or convert those into spaces first)

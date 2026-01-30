@@ -64,12 +64,12 @@ Note: While these 'steps' should be followed,
 optimization to run in parallel on large batches of data
 may/should influence how the processes are run.
 
-# Steps/RUles
+# Steps/Rules
 0. start with input string
 1. add spaces after periods
 2. remove extra/duplicate spaces
 3. remove extra/duplicate dashes
-4. remove extra/duplicate hyphons
+4. remove extra/duplicate hyphens
 
 # potential_words
 5. split text on newlines and spaces (or convert those into spaces first)
