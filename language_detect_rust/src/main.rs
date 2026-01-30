@@ -30,6 +30,181 @@
 //! - No heap allocation in error messages
 //! - Unique error prefixes for traceability
 
+/*
+
+"""
+# Language-Detect:
+
+## Language-Detect (not-not-language)
+Positively defining meaningful language is 'hard'(impossible);
+negatively defining not-language is not hard: most of the time.
+1. Define not-language
+2. count failures to remove all not-language words
+3. count failures to remove all not-language sentences
+4. count and return failures
+
+It is possible much of the time to define
+what is likely not a word,
+and what is likely not a sentence,
+with a set of simple steps and rules
+that are based on empirical data and
+that are not controversial.
+
+Using these rules and steps, is possible much of the time
+to find effective word and sentence counts.
+
+Among the various configuration-settings,
+there are three key (strict or loose) settings
+that a user may want to adjust:
+
+# Sentence structure rules 1
+MIN_WORDS_PER_SENTENCE = 4  # Common sentences have subject and predicate
+MIN_VERBS_PREPOSITIONS_PER_SENTENCE = 1
+MIN_NLTK_STOPWORDS_PER_SENTENCE = 1
+
+Beyond this, everything in the code may be adapted to specific uses.
+
+## Optimization
+An important factor may be balancing run-time optimization
+with accuracy/precision. Two rules, number of raw space
+split words and vowels per word, may sufficient.
+
+
+## About Frequencies
+
+Based on analysis of words and sentences from wiki articles, see more below:
+
+Sentence_stats.py:
+    per sentence
+
+    word:
+    Mean words: 24.76998
+    Median words: 19.0
+    Mode words: 12
+    25th Percentile words: 13.0
+    75th Percentile words: 30.0
+
+    char:
+    Mean characters: 164.1459750
+    Median characters: 124.0
+    Mode characters: 66
+    25th Percentile characters: 86.0
+    75th Percentile characters: 192.0
+
+
+Note: While these 'steps' should be followed,
+optimization to run in parallel on large batches of data
+may/should influence how the processes are run.
+
+# Steps/Rules
+0. start with input string
+1. add spaces after periods
+2. remove extra/duplicate spaces
+3. remove extra/duplicate dashes
+4. remove extra/duplicate hyphons
+
+# potential_words
+5. split text on newlines and spaces (or convert those into spaces first)
+6. remove potential words that are too long
+7. remove potential words that are too short
+8. use LEN_TO_N_VOWELS = {word_length: [possible vowel quantities]}
+   to check if a word of length N has a possible number of vowels.
+
+# potential_sentences
+9. put the (remaining) potential-words back into 'potential_sentence's:
+- split on sentence-ending symbols (ignoring abbrvitaions, etc.)
+10. remove sentences that are too short
+11. split potential sentences that are too long
+12. remove sentences that contain too few prepositions and standard verbs
+13. remove sentences that contain too few stopwords
+
+(other possible checks)
+    maybe, longer sentences should contain more NLTK stop-words
+    maybe: longer sentences should contain more prepositions/verbs/stopwords.
+    probably not:
+    N. remove words that contain too many capital letters
+    expensive but maybe useful: looking for symbols not at the front or end
+    of words but in the middle of words
+    N. remove words with too few vowels
+    N. remove words with too few consonants
+    N. remove words that contain too many numbers
+    N. remove words with too many strange symbols
+
+14. Count What remains, those are output:
+(potential_word_count, potential_sentence_count)
+
+If tuple[0], potential_sentence_count is zero,
+most of the time,
+there is very likely no language in the input,
+most of the time.
+
+Pipeline can be made more strict or loose,
+maybe with a parameter setting for strict or loose.
+
+Use a body of unit-tests on groups of input to test
+and calibrate:
+- normal valid language
+- terse valid language
+- borderline cases
+- invalid non-language
+
+Note: some text-cleaning may be desirable first.
+
+## On Stopwords
+Note: There may be two opposite types of 'stop-words' here:
+1. words or phrases that you need to remove before you use this tool
+2. NLTK (or other) common 'stop-words' that you so much expect
+   that you require N of them to be in any normal sentence.
+"""
+
+"""
+Vowel Ratio Range Heuristic
+----------------------------
+
+Based on analysis of 215,784 Wikipedia article words:
+these possibles numbers of vowels per word length
+were empirically observed.
+See: analyzer_slim_v5.py for analysis, results, and explanation.
+
+Empirical examination of quantized options is more fruitful
+than abstract overall super-pattern searching.
+
+
+LEN_TO_N_VOWELS = {
+    # # {word_length: [possible vowel quantities]}
+    2:  [1],
+
+    3:  [1, 2, 3],
+    4:  [1, 2, 3],
+    5:  [1, 2, 3],
+
+    6:  [1, 2, 3, 4],
+    7:  [1, 2, 3, 4, 5],
+
+    8:     [2, 3, 4, 5],
+    9:     [2, 3, 4, 5, 6],
+    10:    [2, 3, 4, 5, 6],
+
+    11:       [3, 4, 5, 6],
+
+    12:       [3, 4, 5, 6, 7],
+    13:       [3, 4, 5, 6, 7],
+
+    14:          [4, 5, 6, 7],
+
+    15:             [5, 6, 7, 8],
+
+    16:                [6, 7],
+
+    17:                [6, 7, 8],
+    18:                [6, 7, 8],
+}
+
+"""
+
+
+*/
+
 use std::collections::HashSet;
 use std::sync::LazyLock;
 
