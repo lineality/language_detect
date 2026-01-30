@@ -103,16 +103,16 @@ may/should influence how the processes are run.
 3. remove extra/duplicate dashes
 4. remove extra/duplicate hyphens
 
-# potential_words
+# Potential Words: potential_word_count
 5. split text on newlines and spaces (or convert those into spaces first)
 6. remove potential words that are too long
 7. remove potential words that are too short
 8. use LEN_TO_N_VOWELS = {word_length: [possible vowel quantities]}
    to check if a word of length N has a possible number of vowels.
 
-# potential_sentences
+# Potential Sentences: potential_sentence_count
 9. put the (remaining) potential-words back into 'potential_sentence's:
-- split on sentence-ending symbols (ignoring abbrvitaions, etc.)
+- split on sentence-ending symbols (ignoring abbreviations, etc.)
 10. remove sentences that are too short
 11. split potential sentences that are too long
 12. remove sentences that contain too few prepositions and standard verbs
